@@ -50,7 +50,7 @@ def get_word_list():
             data = json.load(f)
             for i in data["table"]:
                 for k, v in i.items():        
-                    word_list.append(word(v[1], v[0], v[2], v[3], 0))
+                    word_list.append(word(v[1], v[0], v[2], "", 0))
     else:
         with open(filename_known,"r") as f: 
             data = json.load(f)
