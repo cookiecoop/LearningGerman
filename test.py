@@ -6,47 +6,48 @@ import tkinter as tk
 from tkinter import ttk
 from tkinter import *
 from pathlib import Path
-
+from functools import partial
 
 class word:
-    def __init__(self, eng, ger, sent, known, correct):
+    def __init__(self, eng="", ger="", sent="", known="", correct=0, wrong=0):
         self.eng = eng
         self.ger = ger.replace(" ","")
         self.sent = sent
         self.known = known
         self.correct = correct
+        self.wrong = wrong
     def set_known(self):
         self.correct += 1
-        if self.correct > 1:
+        if self.correct > self.wrong:
             self.known = "True"
-
+    def set_wrong(self):
+        self.wrong += 1
     
 def get_new_word_list():
-    print("selected no")
-    global filename    
+    global filename, filename_known
+    print("selected no, open ",filename)
+
     with open(filename,"r") as f: 
         data = json.load(f)
         for i in data["table"]:
             for k, v in i.items():        
-                word_list.append(word(v[1], v[0], v[2], "", 0))
+                word_list.append(word(v[1], v[0], v[2], "", 0, 0))
 
     run()
 def get_word_list():
-    global filename
-    global filename_known
+    print(filename,filename_known)
     if not os.path.exists(filename_known):
         print("no progress found, start with full list")
         with open(filename,"r") as f: 
             data = json.load(f)
             for i in data["table"]:
                 for k, v in i.items():        
-                    word_list.append(word(v[1], v[0], v[2], "", 0))
+                    word_list.append(word(v[1], v[0], v[2], "", 0,0))
     else:
         with open(filename_known,"r") as f: 
             data = json.load(f)
             for v in data["table"]:
-                word_list.append(word(v[0], v[1], v[2], v[3], v[4]))
-
+                word_list.append(word(v[0], v[1], v[2], v[3], v[4],v[5]))
 
     run()
 
@@ -58,10 +59,10 @@ def run():
 
     frame.destroy()
     frame = Frame(root)
-    frame.grid(column = 0, columnspan=10, row=0, padx=10, pady=10)
+    set_frame()
     
-    label = Label(frame, text="Continue from last practice?")
-    label.grid(column = 0, columnspan=10, row=0, padx=10, pady=10)
+    label = Label(frame)
+    label.grid(row=0, column =0, columnspan=10, padx=10, pady=10)
 
     entry = Entry(frame)
     entry.focus_set()
@@ -77,24 +78,50 @@ def run():
         print(w.eng)
         
         check = ttk.Button(frame, text= "Check",width= 20, command=lambda : compare(None,entry.get() ))
-        cont = ttk.Button(frame, text= "Continue",width= 20, command= end)    
-
-        entry.grid(column=3,columnspan=10, row=3, padx=10, pady=10)        
-        check.grid(column=7, row=4, padx=10, pady=10)        
-        cont.grid(column=8, row=4, padx=10, pady=10)
+        cont = ttk.Button(frame, text= "Continue",width= 20, command=run)    
+        done = ttk.Button(frame, text= "Exit",width= 20, command=ask_save)
+        
+        entry.grid(column=0,columnspan=10, row=3, padx=10, pady=10)        
+        check.grid(column=3, row=4, padx=10, pady=10)        
+        cont.grid(column=4, row=4, padx=10, pady=10)
+        done.grid(column=5, row=4, padx=10, pady=10)
 
         root.bind('<Right>', lambda event=None: cont.invoke())
         root.bind('<Left>', lambda event=None: check.invoke())
         root.bind('<Return>', lambda event=None: check.invoke())
+        root.bind('<Escape>', lambda event=None: done.invoke())
         
         
-def end():
-    run()
 
+def ask_save():
+    global frame
+    frame.destroy()
+    frame = Frame(root)
+    set_frame()
+
+    label = Label(frame)
+    label.grid(row=0, column =0, columnspan=10, padx=10, pady=10)
+    label.configure(text="Save progress?")
+    
+    yes_but=ttk.Button(
+        frame,
+        text='yes',
+        command=save_progress)
+
+
+    no_but =ttk.Button(
+        frame,
+        text='no',
+        command=exit)
+    
+    yes_but.grid(column=4,  padx=0, pady=0, row=1)
+    no_but.grid(column=5,  padx=0, pady=0,row=1)
+    root.bind('<Right>', lambda event=None: no_but.invoke())
+    root.bind('<Left>', lambda event=None: yes_but.invoke())
     
 def save_progress():
-    global word_list
-    global filename_known
+    global word_list,filename_known
+
     table = {"table":[]}
     for s in word_list:
         table["table"].append([s.eng,s.ger,s.sent,s.known,s.correct])
@@ -113,71 +140,37 @@ def compare(event=None, x=None):
     global frame
 
     label = Label(frame)
-    label.grid(column = 0, columnspan=10, row=0, padx=10, pady=10)
+    label.grid(row=0, column =0, columnspan=10, padx=10, pady=10)
 
     if x == "":
         label.configure(text="answer is {} \n {}".format(w.ger, w.sent))
-    elif x == "exit":
-        frame.destroy()
-        frame = Frame(root)
-        frame.grid(column = 0, columnspan=10, row=0, padx=10, pady=10)
-
-        label = Label(frame)
-        label.grid(column = 0, columnspan=10, row=0, padx=10, pady=10)
-        
-        label.configure(text="Save progress?")
-        yes_but=ttk.Button(
-            frame,
-            text='yes',
-            command=save_progress)
-
-
-        no_but =ttk.Button(
-            frame,
-            text='no',
-            command=exit)
-        
-
-        yes_but.grid(column=7,  padx=0, pady=0, row=1)
-        no_but.grid(column=8,  padx=0, pady=0,row=1)
-        root.bind('<Right>', lambda event=None: no_but.invoke())
-        root.bind('<Left>', lambda event=None: yes_but.invoke())
-
     elif x  == w.ger:        
         w.set_known()
-        end()
+        run()
     elif x  in w.ger:
         label = Label(frame)
-        label.grid(column = 0, columnspan=10, row=0, padx=10, pady=10)
+        label.grid(row=0, column =0, columnspan=10, padx=10, pady=10)
         label.configure(text="irregular werb, try again ")
     else:
         label.configure(text="{} \n {}".format(w.ger, w.sent))
-    
+        w.set_wrong()
 
-def set_filename(event=None, file=None):
-    global filename
-    global filename_known
-    filename = file
-    filename_known = filename.replace('.json',"")+"-known.json"
-
-    print(filename, filename_known)
-    ask_progress()
     
 
 def ask_progress():
-    global frame
+    global frame,filename, filename_known
     frame.destroy()
     frame = Frame(root)
-    label = Label(frame)
-    label.configure( text="Continue from last practice?")
+    set_frame()
 
-    frame.grid(column = 0, columnspan=10, row=0, padx=10, pady=10)
-    label.grid(column = 0, columnspan=10, row=0, padx=10, pady=10)
+    label = Label(frame)
+    label.grid(row=0, column = 0, columnspan=10, padx=10, pady=10)
+    label.configure( text="Continue from last practice?")
     
     yes_but=ttk.Button(
         frame,
         text='yes',
-        command=get_word_list)
+        command= get_word_list)
 
 
     no_but =ttk.Button(
@@ -185,8 +178,8 @@ def ask_progress():
         text='no',
         command=get_new_word_list)
 
-    yes_but.grid(column=7,  padx=0, pady=0, row=1)
-    no_but.grid(column=8,  padx=0, pady=0,row=1)
+    yes_but.grid(column=4,  padx=10, pady=10, row=1)
+    no_but.grid(column=5,  padx=10, pady=10,row=1)
     
     root.bind('<Right>', lambda event=None: no_but.invoke())
     root.bind('<Left>', lambda event=None: yes_but.invoke())
@@ -195,33 +188,50 @@ def select_file() :
     global frame, label
     frame.destroy()
     frame = Frame(root)
-
-    label = Label(frame)
-    label.grid(column = 0, columnspan=10, row=0, padx=10, pady=10)
+    set_frame()
     
+    label = Label(frame)
+    label.grid(row=0, column =0, columnspan=10, padx=10, pady=10)
+
     label.configure(text="Select words to practice")
-    frame.grid(column = 0, columnspan=10, row=0, padx=10, pady=10)
-    label.grid(column = 0, columnspan=10, row=0, padx=10, pady=10)
 
     files = []
     buttons = []
     for file in os.listdir("."):
         if ".json" in file and "known" not in file:
             files.append( file)
-            buttons.append(0)
 
     print(files)
+    x = 5-len(files)%5
+    y = 0
     n = 0
-    for i in files:        
-        buttons[n]= Button(frame, text = i, command = lambda: set_filename(None, i))
-        buttons[n].grid(row = 4, column = n, sticky = W, pady = 4)
+    for i in files:
+        print(i)
+        i_known = i.replace('.json',"")+"-known.json"
+        def set_filename(fname=i,fname_known=i_known):
+            global filename,filename_known
+            filename = fname
+            filename_known = fname_known
+            ask_progress()
+
+        buttons.append(Button(frame, text = i, command = set_filename ))
+        buttons[n].grid(row = 4+y, column = x+1, padx=10, pady = 10)
         n += 1
+        x += 1
+        if x > 4:
+            x = 0
+            y += 1 
 
     return frame
 
-
+def set_frame():
+    global frame
+    frame.grid(column = 0, row=0, padx=10, pady=10)
+    for i in range(16):
+        frame.columnconfigure(i, {'minsize': 50})
+    
 # main sequence
-w = word("","","","",0)
+w = word()
 word_list = []
 
 # create the root window
@@ -231,13 +241,13 @@ root.geometry('1000x300')
 root.resizable(0, 0)
 
 frame = Frame(root)
-frame.grid(column = 0, columnspan=10, row=0, padx=10, pady=10)
+set_frame()
 
-label = Label(frame, text="Welcome")
-label.grid(column = 0, columnspan=10, row=0, padx=10, pady=10)
+label = Label(frame)
 
+filename = ""
+filename_known = ""
 select_file()
 
 # start the app
 root.mainloop()
-
