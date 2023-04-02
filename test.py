@@ -18,7 +18,7 @@ class word:
         self.wrong = wrong
     def set_known(self):
         self.correct += 1
-        if self.correct > self.wrong:
+        if self.correct > self.wrong and self.correct > 1:
             self.known = "True"
     def set_wrong(self):
         self.wrong += 1
@@ -124,7 +124,7 @@ def save_progress():
 
     table = {"table":[]}
     for s in word_list:
-        table["table"].append([s.eng,s.ger,s.sent,s.known,s.correct])
+        table["table"].append([s.eng,s.ger,s.sent,s.known,s.correct,s.wrong])
         with open(filename_known, 'w') as outfile:
             json.dump(table, outfile)
     exit()
@@ -143,7 +143,7 @@ def compare(event=None, x=None):
     label.grid(row=0, column =0, columnspan=10, padx=10, pady=10)
 
     if x == "":
-        label.configure(text="answer is {} \n {}".format(w.ger, w.sent))
+        label.configure(text=" {} \n {}".format(w.ger, w.sent))
     elif x  == w.ger:        
         w.set_known()
         run()
@@ -198,11 +198,11 @@ def select_file() :
     files = []
     buttons = []
     for file in os.listdir("."):
-        if ".json" in file and "known" not in file:
+        if file.endswith(".json") and "known" not in file:
             files.append( file)
 
     print(files)
-    x = 5-len(files)%5
+    x = 4-len(files)%4
     y = 0
     n = 0
     for i in files:
