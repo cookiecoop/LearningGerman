@@ -11,7 +11,7 @@
 	{"cols":["entsprechen","correspond, comply with","Eine Flasche Wein entspricht circa 6 Gläsern."]},
 	{"cols":["entstehen","arise, result, develop","An der ETH Hönggerberg entsteht ein neuer Campus"]},
 	{"cols":["entwickeln","develop, evolve","Der Roboter wurde an der ETH entwickelt."]},
-	{"cols":["ergeben","result in, yield","Die Ernte ergab 300 kg Äpfel."]},
+    {"cols":["ergeben,ergab,ergeben","result in, yield","Die Ernte ergab 300 kg Äpfel."]},
 	{"cols":["erhalten, erhielt, erhalten","receive","Gestern habe ich ein Geschenk erhalten."]},
 	{"cols":["erkennen","recognize, admit","Leo hat mich nicht erkannt."]},
 	{"cols":["erklären","explain","Kannst du mir die Grammatik erklären?"]},
@@ -29,7 +29,7 @@
 	{"cols":["glauben","believe","Ich glaube an den Erfolg dieses Projekts."]},
 	{"cols":["halten, hielt, gehalten","stop, hold","Kannst du bitte kurz meine Jacke halten?"]},
 	{"cols":["handeln","deal, trade","Er handelt mit Kaffee und Kakao."]},
-	{"cols":["kennen, kannte, gekannt","know","Sie kennt ihn schon seit ihrer Kindheit."]},
+    {"cols":["kennen, kannte, gekannt","know (be acquainted)","Sie kennt ihn schon seit ihrer Kindheit."]},
 	{"cols":["lassen, liess, gelassen","let, allow, have done","Sie hat ihn zwei Stunden warten lassen."]},
 	{"cols":["legen","lay, put","Ich lege dir das Buch auf den Tisch."]},
 	{"cols":["lernen","learn","Von deinem Vater kann man viel lernen."]},
@@ -50,16 +50,15 @@
 	{"cols":["stehen, stand, gestanden","stand","Wie lange kannst du auf einem Bein stehen&quot;?"]},
 	{"cols":["stellen","place, set","Ich stelle die Tassen in den Schrank."]},
 	{"cols":["tun, tat, getan","do","Sie hat sehr viel für Menschen in Not getan."]},
-	{"cols":["verbinden","connect, link, bandage","Die Computer sind mit dem Server verbunden."]},
-	{"cols":["","","Der Arzt verbindet die Wunde."]},
+	{"cols":["verbinden","connect, link, bandage","Die Computer sind mit dem Server verbunden. Der Arzt verbindet die Wunde."]},
 	{"cols":["verlieren, verlor, verloren","lose","Ich habe mein Portemonnaie verloren."]},
 	{"cols":["verstehen, verstand, verstanden","understand","Ich verstehe dich und deine Zweifel sehr gut."]},
 	{"cols":["versuchen","try, attempt","Hast du versucht, ihn im Büro zu erreichen?"]},
 	{"cols":["vorstellen","introduce, imagine","Darf ich Ihnen unsere Direktorin Frau Meier vorstellen?"]},
 	{"cols":["werden, wurde, geworden","become, get","Sein Vater ist alt geworden."]},
-	{"cols":["wissen","know","Weisst du, wo das Sekretariat ist?"]},
+    {"cols":["wissen","know","Weisst du, wo das Sekretariat ist?"]},
 	{"cols":["wollen, wollte, gewollt","want to","Nach seinem Studium will er eine Weltreise machen."]},
 	{"cols":["zeigen","show","Er zeigte mir, wo er wohnt."]},
-	{"cols":["ziehen","pull, move, drag","Er zog nach München."]},
-	{"cols":["","","Zum Öffnen bitte ziehen."]}
+	{"cols":["ziehen","pull, move, drag","Er zog nach München." um Öffnen bitte ziehen."]}
 ]}
+BB

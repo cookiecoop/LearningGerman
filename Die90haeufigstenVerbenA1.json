@@ -29,5 +29,5 @@
 	{"cols":["tragen, trug, getragen","carry, wear","Er trägt ein gestreiftes T-Shirt.",""]},
 	{"cols":["treffen, traf, getroffen","meet","Wir treffen uns um 20:30 Uhr am Central.",""]},
 	{"cols":["warten","wait","Wir warten am Central auf dich",""]},
-	{"cols":["wohnen","live","Peter wohnt an der Culmannstrasse in Zürich.",""]}
+    {"cols":["wohnen","live,reside","Peter wohnt an der Culmannstrasse in Zürich.",""]}
 ]}

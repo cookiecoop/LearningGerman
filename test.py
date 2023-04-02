@@ -18,7 +18,7 @@ class word:
         self.wrong = wrong
     def set_known(self):
         self.correct += 1
-        if self.correct > self.wrong and self.correct > 1:
+        if self.correct > self.wrong and self.correct > 0:
             self.known = "True"
     def set_wrong(self):
         self.wrong += 1
@@ -48,7 +48,8 @@ def get_word_list():
             data = json.load(f)
             for v in data["table"]:
                 word_list.append(word(v[0], v[1], v[2], v[3], v[4],v[5]))
-
+                if v[3] == "":
+                    print(v[0], v[1], v[2], v[3], v[4],v[5])
     run()
 
     
@@ -75,9 +76,9 @@ def run():
     if len(new_list) > 0:
         w = new_list[i]
         label.configure(text=w.eng)
-        print(w.eng)
+        print(w.eng, w.known, w.correct, w.wrong)
         
-        check = ttk.Button(frame, text= "Check",width= 20, command=lambda : compare(None,entry.get() ))
+        check = ttk.Button(frame, text= "Check",width= 20, command=lambda : compare(None,entry.get(),label ))
         cont = ttk.Button(frame, text= "Continue",width= 20, command=run)    
         done = ttk.Button(frame, text= "Exit",width= 20, command=ask_save)
         
@@ -87,10 +88,10 @@ def run():
         done.grid(column=5, row=4, padx=10, pady=10)
 
         root.bind('<Right>', lambda event=None: cont.invoke())
-        root.bind('<Left>', lambda event=None: check.invoke())
         root.bind('<Return>', lambda event=None: check.invoke())
         root.bind('<Escape>', lambda event=None: done.invoke())
-        
+    else:
+        select_file()
         
 
 def ask_save():
@@ -116,8 +117,11 @@ def ask_save():
     
     yes_but.grid(column=4,  padx=0, pady=0, row=1)
     no_but.grid(column=5,  padx=0, pady=0,row=1)
+
+    yes_but.focus_set()
     root.bind('<Right>', lambda event=None: no_but.invoke())
     root.bind('<Left>', lambda event=None: yes_but.invoke())
+    root.bind('<Right>', lambda event=None: yes_but.invoke())
     
 def save_progress():
     global word_list,filename_known
@@ -135,12 +139,12 @@ def exit():
     frame.destroy()
     root.destroy()
     
-def compare(event=None, x=None):
+def compare(event=None, x=None,label=None):
     global w
     global frame
 
-    label = Label(frame)
-    label.grid(row=0, column =0, columnspan=10, padx=10, pady=10)
+    #label = Label(frame)
+    #label.grid(row=0, column=0, columnspan=15, padx=10, pady=10)
 
     if x == "":
         label.configure(text=" {} \n {}".format(w.ger, w.sent))
@@ -148,8 +152,8 @@ def compare(event=None, x=None):
         w.set_known()
         run()
     elif x  in w.ger:
-        label = Label(frame)
-        label.grid(row=0, column =0, columnspan=10, padx=10, pady=10)
+        #label = Label(frame)
+        #label.grid(row=0, column =0, columnspan=10, padx=10, pady=10)
         label.configure(text="irregular werb, try again ")
     else:
         label.configure(text="{} \n {}".format(w.ger, w.sent))
@@ -180,9 +184,10 @@ def ask_progress():
 
     yes_but.grid(column=4,  padx=10, pady=10, row=1)
     no_but.grid(column=5,  padx=10, pady=10,row=1)
-    
+
+    yes_but.focus_set()
     root.bind('<Right>', lambda event=None: no_but.invoke())
-    root.bind('<Left>', lambda event=None: yes_but.invoke())
+    root.bind('<Return>', lambda event=None: yes_but.invoke())
     
 def select_file() :
     global frame, label
@@ -202,7 +207,7 @@ def select_file() :
             files.append( file)
 
     print(files)
-    x = 4-len(files)%4
+    x = 0
     y = 0
     n = 0
     for i in files:
@@ -218,7 +223,7 @@ def select_file() :
         buttons[n].grid(row = 4+y, column = x+1, padx=10, pady = 10)
         n += 1
         x += 1
-        if x > 4:
+        if x > 2:
             x = 0
             y += 1 
 
