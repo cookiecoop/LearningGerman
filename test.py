@@ -33,10 +33,11 @@ for f in file_names:
     files[f] = resource_path(f+".json")
 
 class word:
-    def __init__(self, eng="", ger="", sent="", known="", correct=0, wrong=0):
+    def __init__(self, eng="", ger="", sent="", word="",known="", correct=0, wrong=0):
         self.eng = eng
         self.ger = ger.replace(" ","")
         self.sent = sent
+        self.word = word
         self.known = known
         self.correct = correct
         self.wrong = wrong
@@ -55,7 +56,10 @@ def get_new_word_list():
         data = json.load(f)
         for i in data["table"]:
             for k, v in i.items():        
-                word_list.append(word(v[1], v[0], v[2], "", 0, 0))
+                if len(v) > 3:
+                    word_list.append(word(v[1], v[0], v[2], v[3],"", 0,0))
+                else:
+                    word_list.append(word(v[1], v[0], v[2], "","", 0,0))
 
     run()
 def get_word_list():
@@ -67,14 +71,16 @@ def get_word_list():
             data = json.load(f)
             for i in data["table"]:
                 for k, v in i.items():        
-                    word_list.append(word(v[1], v[0], v[2], "", 0,0))
+                    if len(v) > 3:
+                        word_list.append(word(v[1], v[0], v[2], v[3],"", 0,0))
+                    else:
+                        word_list.append(word(v[1], v[0], v[2], "","", 0,0))
     else:
         with open(filename_known,"r") as f: 
             data = json.load(f)
             for v in data["table"]:
-                word_list.append(word(v[0], v[1], v[2], v[3], v[4],v[5]))
-                if v[3] == "":
-                    print(v[0], v[1], v[2], v[3], v[4],v[5])
+                word_list.append(word(v[0], v[1], v[2], v[3], v[4],v[5],v[6]))
+
     run()
 
     
@@ -88,7 +94,7 @@ def run():
     label = ctk.CTkLabel(frame)
     label.grid(row=0, column =0, columnspan=5, padx=10, pady=10)
 
-    entry = Entry(frame)
+    entry = ctk.CTkEntry(frame)
     entry.focus_set()
     x = entry.get()        
     i = 0    
@@ -104,11 +110,13 @@ def run():
         check = ctk.CTkButton(frame, text= "Check",width= 100, command=lambda : compare(None,entry.get(),label ))
         cont = ctk.CTkButton(frame, text= "Continue",width= 100,  command=run)
         done = ctk.CTkButton(frame, text= "Exit",width= 100,  command=ask_save)
+        example = ctk.CTkButton(frame, text= "Example",width= 100, command=lambda : get_sentence(None,entry,label ))
         
         entry.grid(column=0,columnspan=5, row=3, padx=10, pady=10)
         check.grid(column=1, row=4, padx=10, pady=10)
-        cont.grid(column=2, row=4, padx=10, pady=10)
-        done.grid(column=3, row=4, padx=10, pady=10)
+        example.grid(column=2, row=4, padx=10, pady=10)
+        cont.grid(column=3, row=4, padx=10, pady=10)
+        done.grid(column=4, row=4, padx=10, pady=10)
 
         root.bind('<Right>', lambda event=None: cont.invoke())
         root.bind('<Return>', lambda event=None: check.invoke())
@@ -163,7 +171,7 @@ def save_progress():
     print(filename_known)
     table = {"table":[]}
     for s in word_list:
-        table["table"].append([s.eng,s.ger,s.sent,s.known,s.correct,s.wrong])
+        table["table"].append([s.eng,s.ger,s.sent,s.word,s.known,s.correct,s.wrong])
         with open(filename_known, 'w') as outfile:
             json.dump(table, outfile)
     exit()
@@ -178,25 +186,51 @@ def compare(event=None, x=None,label=None):
     global w
   
     if x == "":
-        label.configure(text=" {} \n {}".format(w.ger, w.sent))
+        label.configure(text=" {}".format(w.ger))
     elif x  == w.ger:        
         w.set_known()
         run()
     elif x  in w.ger:
         label.configure(text="irregular werb, try again ")
     else:
-        label.configure(text="{} \n {}".format(w.ger, w.sent))
+        label.configure(text="{}".format(w.ger))
         w.set_wrong()
 
+def compare2(event=None, x=None,label=None):
+    global w
+
+    if x  == w.word:        
+        label.configure(text=w.sent, text_color=("midnight blue","dark-blue"))
+    else:
+        label.configure(text=w.sent, text_color=("red","red"))
     
 
+def get_sentence(event=None, entry=None,label=None):
+    global w
+
+    entry.delete(0,END)
+    x = entry.get()
+
+    sent = w.sent 
+    if w.word != "":
+        sent = w.sent.replace(w.word, "__________")
+        
+    label.configure(text=sent)
+
+    check = ctk.CTkButton(frame, text= "Check",width= 100, command=lambda : compare2(None,entry.get(),label ))
+    root.bind('<Return>', lambda event=None: check.invoke())
+        
+        
 def ask_progress():
     global frame,filename, filename_known
 
     set_frame()
 
-    label = ctk.CTkLabel(frame)
-    label.grid(row=0, column = 0, sticky ="ew", columnspan=6, padx=10, pady=10)
+    label = ctk.CTkLabel(frame, width=150,
+                               height=25,
+                               fg_color=("white", "gray75"),
+                               corner_radius=8)
+    label.grid(row=0, column = 0, sticky ="ew", columnspan=5, padx=10, pady=10)
     label.configure( text="Continue from last practice?")
     
     yes_but=ctk.CTkButton(
@@ -222,10 +256,13 @@ def select_file() :
   
     set_frame()
     
-    label = ctk.CTkLabel(frame)
-    label.grid(row=0, column =0, sticky="ew",columnspan=6, padx=10, pady=10)
+    label = ctk.CTkLabel(frame, width=120,
+                               height=25,
+                               fg_color=("white", "gray75"),
+                               corner_radius=8)
+    label.grid(row=0, column =0, sticky="ew",columnspan=3, padx=10, pady=10)
 
-    label.configure(text="Select words to practice")
+    label.configure(text="Select word list to practice")
 
     buttons = []
 
@@ -254,7 +291,7 @@ def select_file() :
 def set_frame():
     global frame
     frame.destroy()
-    frame = ctk.CTkFrame(root, width=600, height=250)
+    frame = ctk.CTkFrame(root, width=600, height=250, bg_color=("midnight blue","dark-blue"))
     frame.grid(column = 0, row=0, padx=10, pady=10)
     #frame.grid(sticky='wse')
     for i in range(6):
@@ -267,12 +304,12 @@ w = word()
 word_list = []
 
 # create the root window
-root = ctk.CTk()
+root = ctk.CTk(fg_color=("midnight blue"," midnight blue"))
 root.wm_title('new  practice')
-root.geometry('650x300')
+root.geometry('620x270')
 root.resizable(0, 0)
 
-frame = ctk.CTkFrame(root)
+frame = ctk.CTkFrame(root, bg_color=("midnight blue","dark-blue"))
 set_frame()
 
 label = ctk.CTkLabel(frame)
