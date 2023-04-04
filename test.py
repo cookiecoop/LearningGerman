@@ -8,6 +8,24 @@ from tkinter import *
 from pathlib import Path
 from functools import partial
 
+def resource_path(relative_path):
+    try:
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath("./word_list")
+    return os.path.join(base_path, relative_path)
+
+file_names = ["SportundFreizeit",
+              "VerbenNiveauA2-B1",
+              "Die90haeufigstenVerbenA1",
+              "HaeufigkeitundReihenfolge",
+              "KoerperlicheTaetigkeiten"
+              ]
+
+files = {}
+for f in file_names:
+    files[f] = resource_path(f+".json")
+
 class word:
     def __init__(self, eng="", ger="", sent="", known="", correct=0, wrong=0):
         self.eng = eng
@@ -38,7 +56,8 @@ def get_word_list():
     print(filename,filename_known)
     if not os.path.exists(filename_known):
         print("no progress found, start with full list")
-        with open(filename,"r") as f: 
+        with open(filename,"r") as f:
+            print("loading ",f)
             data = json.load(f)
             for i in data["table"]:
                 for k, v in i.items():        
@@ -126,6 +145,20 @@ def ask_save():
 def save_progress():
     global word_list,filename_known
 
+    if getattr(sys, 'frozen', False):
+        application_path = os.path.dirname(os.path.realpath(sys.executable))
+        running_mode = 'Frozen/executable'
+    else:
+        try:
+            app_full_path = os.path.realpath(__file__)
+            application_path = os.path.dirname(app_full_path)
+            running_mode = "Non-interactive (e.g. 'python myapp.py')"
+        except NameError:
+            application_path = os.getcwd()
+            running_mode = 'Interactive'
+        
+    filename_known = os.path.join(application_path, filename_known)
+    print(filename_known)
     table = {"table":[]}
     for s in word_list:
         table["table"].append([s.eng,s.ger,s.sent,s.known,s.correct,s.wrong])
@@ -195,17 +228,12 @@ def select_file() :
 
     label.configure(text="Select words to practice")
 
-    files = []
     buttons = []
-    for file in os.listdir("."):
-        if file.endswith(".json") and "known" not in file:
-            files.append( file)
 
-    print(files)
     x = 0
     y = 0
     n = 0
-    for i in files:
+    for k,i in files.items():
         print(i)
         i_known = i.replace('.json',"")+"-known.json"
         def set_filename(fname=i,fname_known=i_known):
@@ -214,7 +242,7 @@ def select_file() :
             filename_known = fname_known
             ask_progress()
 
-        buttons.append(Button(frame, text = i, command = set_filename ))
+        buttons.append(Button(frame, text = k, command = set_filename ))
         buttons[n].grid(row = 4+y, column = x+1, padx=10, pady = 10)
         n += 1
         x += 1
@@ -250,4 +278,5 @@ filename_known = ""
 select_file()
 
 # start the app
-root.mainloop()
+if __name__ == '__main__':
+    root.mainloop()
