@@ -191,7 +191,7 @@ def compare(event=None, x=None,label=None):
         w.set_known()
         run()
     elif x  in w.ger:
-        label.configure(text="irregular werb, try again ")
+        label.configure(text="Almost there, try again")
     else:
         label.configure(text="{}".format(w.ger))
         w.set_wrong()
