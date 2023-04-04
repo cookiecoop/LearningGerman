@@ -13,6 +13,7 @@ from functools import partial
 
 ctk.set_appearance_mode("System")  # Modes: system (default), light, dark
 ctk.set_default_color_theme("blue")  # Themes: blue (default), dark-blue, green
+special_char_map = {ord('ä'):'a', ord('ü'):'u', ord('ö'):'o', ord('ß'):'s'}
 
 def resource_path(relative_path):
     try:
@@ -35,7 +36,7 @@ for f in file_names:
 class word:
     def __init__(self, eng="", ger="", sent="", word="",known="", correct=0, wrong=0):
         self.eng = eng
-        self.ger = ger.replace(" ","")
+        self.ger = ger
         self.sent = sent
         self.word = word
         self.known = known
@@ -184,14 +185,17 @@ def exit():
     
 def compare(event=None, x=None,label=None):
     global w
-  
+    
+    print(w.ger, w.ger.lower().translate(special_char_map).replace(" ",""))
     if x == "":
         label.configure(text=" {}".format(w.ger))
-    elif x  == w.ger:        
+    elif x.replace(" ","").lower()  == w.ger.replace(" ","").lower(): 
         w.set_known()
         run()
-    elif x  in w.ger:
+    elif x.lower()  in w.ger.lower():
         label.configure(text="Almost there, try again")
+    elif x.lower().translate(special_char_map).replace(" ","") ==  w.ger.lower().translate(special_char_map).replace(" ",""):
+        label.configure(text="Missing an umlaut probably, try again")
     else:
         label.configure(text="{}".format(w.ger))
         w.set_wrong()
@@ -199,7 +203,7 @@ def compare(event=None, x=None,label=None):
 def compare2(event=None, x=None,label=None):
     global w
 
-    if x  == w.word:        
+    if x.replace(" ","").lower()  == w.word.replace(" ","").lower():        
         label.configure(text=w.sent, text_color=("midnight blue","dark-blue"))
     else:
         label.configure(text=w.sent, text_color=("red","red"))
