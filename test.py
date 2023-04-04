@@ -5,8 +5,14 @@ from random import seed, choice,randrange
 import tkinter as tk
 from tkinter import ttk
 from tkinter import *
+
+import customtkinter as ctk
+
 from pathlib import Path
 from functools import partial
+
+ctk.set_appearance_mode("System")  # Modes: system (default), light, dark
+ctk.set_default_color_theme("blue")  # Themes: blue (default), dark-blue, green
 
 def resource_path(relative_path):
     try:
@@ -77,12 +83,10 @@ def run():
     global w
     global frame
 
-    frame.destroy()
-    frame = Frame(root)
     set_frame()
     
-    label = Label(frame)
-    label.grid(row=0, column =0, columnspan=10, padx=10, pady=10)
+    label = ctk.CTkLabel(frame)
+    label.grid(row=0, column =0, columnspan=5, padx=10, pady=10)
 
     entry = Entry(frame)
     entry.focus_set()
@@ -97,14 +101,14 @@ def run():
         label.configure(text=w.eng)
         print(w.eng, w.known, w.correct, w.wrong)
         
-        check = ttk.Button(frame, text= "Check",width= 20, command=lambda : compare(None,entry.get(),label ))
-        cont = ttk.Button(frame, text= "Continue",width= 20, command=run)    
-        done = ttk.Button(frame, text= "Exit",width= 20, command=ask_save)
+        check = ctk.CTkButton(frame, text= "Check",width= 100, command=lambda : compare(None,entry.get(),label ))
+        cont = ctk.CTkButton(frame, text= "Continue",width= 100,  command=run)
+        done = ctk.CTkButton(frame, text= "Exit",width= 100,  command=ask_save)
         
-        entry.grid(column=0,columnspan=10, row=3, padx=10, pady=10)        
-        check.grid(column=3, row=4, padx=10, pady=10)        
-        cont.grid(column=4, row=4, padx=10, pady=10)
-        done.grid(column=5, row=4, padx=10, pady=10)
+        entry.grid(column=0,columnspan=5, row=3, padx=10, pady=10)
+        check.grid(column=1, row=4, padx=10, pady=10)
+        cont.grid(column=2, row=4, padx=10, pady=10)
+        done.grid(column=3, row=4, padx=10, pady=10)
 
         root.bind('<Right>', lambda event=None: cont.invoke())
         root.bind('<Return>', lambda event=None: check.invoke())
@@ -115,27 +119,25 @@ def run():
 
 def ask_save():
     global frame
-    frame.destroy()
-    frame = Frame(root)
     set_frame()
 
-    label = Label(frame)
-    label.grid(row=0, column =0, columnspan=10, padx=10, pady=10)
+    label = ctk.CTkLabel(frame)
+    label.grid(row=0, column =0, columnspan=5, padx=10, pady=10)
     label.configure(text="Save progress?")
     
-    yes_but=ttk.Button(
+    yes_but=ctk.CTkButton(
         frame,
         text='yes',
         command=save_progress)
 
 
-    no_but =ttk.Button(
+    no_but =ctk.CTkButton(
         frame,
         text='no',
         command=exit)
-    
-    yes_but.grid(column=4,  padx=0, pady=0, row=1)
-    no_but.grid(column=5,  padx=0, pady=0,row=1)
+
+    yes_but.grid(column=1,   sticky ="ew",padx=10, pady=10, row=1)
+    no_but.grid(column=3,   sticky ="ew",padx=10, pady=10,row=1)
 
     yes_but.focus_set()
     root.bind('<Right>', lambda event=None: no_but.invoke())
@@ -174,8 +176,7 @@ def exit():
     
 def compare(event=None, x=None,label=None):
     global w
-    global frame
-
+  
     if x == "":
         label.configure(text=" {} \n {}".format(w.ger, w.sent))
     elif x  == w.ger:        
@@ -191,27 +192,26 @@ def compare(event=None, x=None,label=None):
 
 def ask_progress():
     global frame,filename, filename_known
-    frame.destroy()
-    frame = Frame(root)
+
     set_frame()
 
-    label = Label(frame)
-    label.grid(row=0, column = 0, columnspan=10, padx=10, pady=10)
+    label = ctk.CTkLabel(frame)
+    label.grid(row=0, column = 0, sticky ="ew", columnspan=6, padx=10, pady=10)
     label.configure( text="Continue from last practice?")
     
-    yes_but=ttk.Button(
+    yes_but=ctk.CTkButton(
         frame,
         text='yes',
         command= get_word_list)
 
 
-    no_but =ttk.Button(
+    no_but =ctk.CTkButton(
         frame,
         text='no',
         command=get_new_word_list)
 
-    yes_but.grid(column=4,  padx=10, pady=10, row=1)
-    no_but.grid(column=5,  padx=10, pady=10,row=1)
+    yes_but.grid(column=1,   sticky ="ew",padx=10, pady=10, row=1)
+    no_but.grid(column=3,   sticky ="ew",padx=10, pady=10,row=1)
 
     yes_but.focus_set()
     root.bind('<Right>', lambda event=None: no_but.invoke())
@@ -219,12 +219,11 @@ def ask_progress():
     
 def select_file() :
     global frame, label
-    frame.destroy()
-    frame = Frame(root)
+  
     set_frame()
     
-    label = Label(frame)
-    label.grid(row=0, column =0, columnspan=10, padx=10, pady=10)
+    label = ctk.CTkLabel(frame)
+    label.grid(row=0, column =0, sticky="ew",columnspan=6, padx=10, pady=10)
 
     label.configure(text="Select words to practice")
 
@@ -242,8 +241,8 @@ def select_file() :
             filename_known = fname_known
             ask_progress()
 
-        buttons.append(Button(frame, text = k, command = set_filename ))
-        buttons[n].grid(row = 4+y, column = x+1, padx=10, pady = 10)
+        buttons.append(ctk.CTkButton(frame, text = k, command = set_filename ))
+        buttons[n].grid(row = 4+y, column = x,sticky="ew", padx=10, pady = 10)
         n += 1
         x += 1
         if x > 2:
@@ -254,24 +253,29 @@ def select_file() :
 
 def set_frame():
     global frame
+    frame.destroy()
+    frame = ctk.CTkFrame(root, width=600, height=250)
     frame.grid(column = 0, row=0, padx=10, pady=10)
-    for i in range(16):
-        frame.columnconfigure(i, {'minsize': 50})
-    
+    #frame.grid(sticky='wse')
+    for i in range(6):
+        frame.columnconfigure(i, {'minsize': 100})
+    frame.grid_propagate(0)
+    #frame.grid(sticky='nswe')
+
 # main sequence
 w = word()
 word_list = []
 
 # create the root window
-root = tk.Tk()
+root = ctk.CTk()
 root.wm_title('new  practice')
-root.geometry('1000x300')
+root.geometry('650x300')
 root.resizable(0, 0)
 
-frame = Frame(root)
+frame = ctk.CTkFrame(root)
 set_frame()
 
-label = Label(frame)
+label = ctk.CTkLabel(frame)
 
 filename = ""
 filename_known = ""
