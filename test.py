@@ -143,17 +143,12 @@ def compare(event=None, x=None,label=None):
     global w
     global frame
 
-    #label = Label(frame)
-    #label.grid(row=0, column=0, columnspan=15, padx=10, pady=10)
-
     if x == "":
         label.configure(text=" {} \n {}".format(w.ger, w.sent))
     elif x  == w.ger:        
         w.set_known()
         run()
     elif x  in w.ger:
-        #label = Label(frame)
-        #label.grid(row=0, column =0, columnspan=10, padx=10, pady=10)
         label.configure(text="irregular werb, try again ")
     else:
         label.configure(text="{} \n {}".format(w.ger, w.sent))
