@@ -22,6 +22,15 @@ def resource_path(relative_path):
         base_path = os.path.abspath("./word_list")
     return os.path.join(base_path, relative_path)
 
+frozen = 'not'
+if getattr(sys, 'frozen', False):
+        # we are running in a bundle
+        frozen = 'ever so'
+        bundle_dir = sys._MEIPASS
+else:
+        # we are running in a normal Python environment
+        bundle_dir = os.path.dirname(os.path.abspath(__file__))
+
 file_names = ["SportundFreizeit",
               "VerbenNiveauA2-B1",
               "Die90haeufigstenVerbenA1",
@@ -30,8 +39,12 @@ file_names = ["SportundFreizeit",
               ]
 
 files = {}
+files_known = {}
 for f in file_names:
     files[f] = resource_path(f+".json")
+    files_known[f] = resource_path(f+"-known.json")
+    #files[f] = os.path.join(bundle_dir, "/word_list/"+f+".json")
+    #files_known[f] = os.path.join(bundle_dir, "/word_list/"+f+"-known.json")
 
 class word:
     def __init__(self, eng="", ger="", sent="", word="",known="", correct=0, wrong=0):
@@ -95,7 +108,7 @@ def run():
     label = ctk.CTkLabel(frame)
     label.grid(row=0, column =0, columnspan=5, padx=10, pady=10)
 
-    entry = ctk.CTkEntry(frame)
+    entry = ctk.CTkEntry(frame,width=250)
     entry.focus_set()
     x = entry.get()        
     i = 0    
@@ -130,8 +143,10 @@ def ask_save():
     global frame
     set_frame()
 
-    label = ctk.CTkLabel(frame)
-    label.grid(row=0, column =0, columnspan=5, padx=10, pady=10)
+    label = ctk.CTkLabel(frame, width=100,
+                               fg_color=("white", "gray75"),
+                               corner_radius=8)
+    label.grid(row=0, column = 0, sticky ="ew", columnspan=5, padx=10, pady=10)
     label.configure(text="Save progress?")
     
     yes_but=ctk.CTkButton(
@@ -168,7 +183,7 @@ def save_progress():
             application_path = os.getcwd()
             running_mode = 'Interactive'
         
-    filename_known = os.path.join(application_path, filename_known)
+    #filename_known = os.path.join(application_path, filename_known)
     print(filename_known)
     table = {"table":[]}
     for s in word_list:
@@ -229,12 +244,12 @@ def ask_progress():
     global frame,filename, filename_known
 
     set_frame()
-
-    label = ctk.CTkLabel(frame, width=150,
+    
+    label = ctk.CTkLabel(frame, width=600,
                                height=25,
                                fg_color=("white", "gray75"),
                                corner_radius=8)
-    label.grid(row=0, column = 0, sticky ="ew", columnspan=5, padx=10, pady=10)
+    label.grid(row=0, column = 0, sticky ="ew", columnspan=4, padx=10, pady=10)
     label.configure( text="Continue from last practice?")
     
     yes_but=ctk.CTkButton(
@@ -249,7 +264,7 @@ def ask_progress():
         command=get_new_word_list)
 
     yes_but.grid(column=1,   sticky ="ew",padx=10, pady=10, row=1)
-    no_but.grid(column=3,   sticky ="ew",padx=10, pady=10,row=1)
+    no_but.grid(column=2,   sticky ="ew",padx=10, pady=10,row=1)
 
     yes_but.focus_set()
     root.bind('<Right>', lambda event=None: no_but.invoke())
@@ -275,7 +290,7 @@ def select_file() :
     n = 0
     for k,i in files.items():
         print(i)
-        i_known = i.replace('.json',"")+"-known.json"
+        i_known = files_known[k]
         def set_filename(fname=i,fname_known=i_known):
             global filename,filename_known
             filename = fname
@@ -295,7 +310,7 @@ def select_file() :
 def set_frame():
     global frame
     frame.destroy()
-    frame = ctk.CTkFrame(root, width=600, height=250, bg_color=("midnight blue","dark-blue"))
+    frame = ctk.CTkFrame(root, width=630, height=250, bg_color=("midnight blue","dark-blue"))
     frame.grid(column = 0, row=0, padx=10, pady=10)
     #frame.grid(sticky='wse')
     for i in range(6):
@@ -310,7 +325,7 @@ word_list = []
 # create the root window
 root = ctk.CTk(fg_color=("midnight blue"," midnight blue"))
 root.wm_title('new  practice')
-root.geometry('620x270')
+root.geometry('650x270')
 root.resizable(0, 0)
 
 frame = ctk.CTkFrame(root, bg_color=("midnight blue","dark-blue"))
