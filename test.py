@@ -43,8 +43,6 @@ files_known = {}
 for f in file_names:
     files[f] = resource_path(f+".json")
     files_known[f] = resource_path(f+"-known.json")
-    #files[f] = os.path.join(bundle_dir, "/word_list/"+f+".json")
-    #files_known[f] = os.path.join(bundle_dir, "/word_list/"+f+"-known.json")
 
 class word:
     def __init__(self, eng="", ger="", sent="", word="",known="", correct=0, wrong=0):
@@ -135,6 +133,7 @@ def run():
         root.bind('<Right>', lambda event=None: cont.invoke())
         root.bind('<Return>', lambda event=None: check.invoke())
         root.bind('<Escape>', lambda event=None: done.invoke())
+        root.bind('<Shift Return>', lambda event=None: example.invoke())
     else:
         select_file()
         
@@ -220,6 +219,10 @@ def compare2(event=None, x=None,label=None):
 
     if x.replace(" ","").lower()  == w.word.replace(" ","").lower():        
         label.configure(text=w.sent, text_color=("midnight blue","dark-blue"))
+    elif x.lower()  in w.word.lower():
+        label.configure(text="Almost there, try again")
+    elif x.lower().translate(special_char_map).replace(" ","") ==  w.word.lower().translate(special_char_map).replace(" ",""):
+        label.configure(text="Missing an umlaut probably, try again")
     else:
         label.configure(text=w.sent, text_color=("red","red"))
     
@@ -233,8 +236,8 @@ def get_sentence(event=None, entry=None,label=None):
     sent = w.sent 
     if w.word != "":
         sent = w.sent.replace(w.word, "__________")
-        
-    label.configure(text=sent)
+   
+    label.configure(text="{} ({})".format(sent, w.eng))
 
     check = ctk.CTkButton(frame, text= "Check",width= 100, command=lambda : compare2(None,entry.get(),label ))
     root.bind('<Return>', lambda event=None: check.invoke())
