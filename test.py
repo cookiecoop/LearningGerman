@@ -38,7 +38,8 @@ file_names = ["SportundFreizeit",
               "HaeufigkeitundReihenfolge",
               "KoerperlicheTaetigkeiten",
               "AeusseresErscheinungsbild",
-              "CharakterAndTemperament"
+              "CharakterAndTemperament",
+              "Zeitangaben"
               ]
 
 files = {}
