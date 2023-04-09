@@ -31,11 +31,14 @@ else:
         # we are running in a normal Python environment
         bundle_dir = os.path.dirname(os.path.abspath(__file__))
 
+
 file_names = ["SportundFreizeit",
               "VerbenNiveauA2-B1",
               "Die90haeufigstenVerbenA1",
               "HaeufigkeitundReihenfolge",
-              "KoerperlicheTaetigkeiten"
+              "KoerperlicheTaetigkeiten",
+              "AeusseresErscheinungsbild",
+              "CharakterAndTemperament"
               ]
 
 files = {}
