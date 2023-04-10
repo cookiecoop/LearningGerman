@@ -32,9 +32,9 @@ else:
         bundle_dir = os.path.dirname(os.path.abspath(__file__))
 
 
-file_names = ["SportundFreizeit",
+file_names = ["Die90haeufigstenVerbenA1",
               "VerbenNiveauA2-B1",
-              "Die90haeufigstenVerbenA1",
+              "SportundFreizeit",
               "HaeufigkeitundReihenfolge",
               "KoerperlicheTaetigkeiten",
               "AeusseresErscheinungsbild",
@@ -211,9 +211,14 @@ def compare(event=None, x=None,label=None):
         w.set_known()
         run()
     elif x.lower()  in w.ger.lower():
-        label.configure(text="Almost there, try again")
+        if "/" in w.ger.lower(): 
+            label.configure(text="There are alternatives, try again")
+        elif "," in w.ger.lower():
+            label.configure(text="Irregular verb, try again")
+        else:
+            label.configure(text="Almost there, try again")
     elif x.lower().translate(special_char_map).replace(" ","") ==  w.ger.lower().translate(special_char_map).replace(" ",""):
-        label.configure(text="Missing an umlaut probably, try again")
+        label.configure(text="Missing or extra umlaut, try again")
     else:
         label.configure(text="{}".format(w.ger))
         w.set_wrong()
