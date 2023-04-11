@@ -4,6 +4,7 @@ pip3 install virtualenv
 virtualenv -p python3 .
 source ./bin/activate
 pip3 install customtkinter
+pip3 install pyinstaller 
 
 #darkdetect="/Library/Frameworks/Python.framework/Versions/3.10/lib/python3.10/site-packages/darkdetect:darkdetect/"
 #ctk_data="/Library/Frameworks/Python.framework/Versions/3.10/lib/python3.10/site-packages/customtkinter:customtkinter/"
