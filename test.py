@@ -111,7 +111,7 @@ def get_progress():
         print(f,files_progress[f])
         count += len(word_lists[f])
         count_progress += len(known_lists[f])
-
+        
         print("count ",count_progress/count)
         
 def select_file() :
@@ -349,8 +349,7 @@ def ask_save(mes=""):
 
     yes_but.focus_set()
     root.bind('<Right>', lambda event=None: no_but.invoke())
-    root.bind('<Left>', lambda event=None: yes_but.invoke())
-    root.bind('<Right>', lambda event=None: yes_but.invoke())
+    root.bind('<Returb>', lambda event=None: yes_but.invoke())
     
 def save_progress():
     global word_list,filename_known
@@ -402,8 +401,7 @@ def ask_new_practice():
 
     yes_but.focus_set()
     root.bind('<Right>', lambda event=None: no_but.invoke())
-    root.bind('<Left>', lambda event=None: yes_but.invoke())
-    root.bind('<Right>', lambda event=None: yes_but.invoke())
+    root.bind('<Return>', lambda event=None: yes_but.invoke())
 
 def exit():
     global root

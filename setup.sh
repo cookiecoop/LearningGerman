@@ -6,8 +6,8 @@ source ./bin/activate
 pip3 install customtkinter
 pip3 install pyinstaller 
 
-#darkdetect="/Library/Frameworks/Python.framework/Versions/3.10/lib/python3.10/site-packages/darkdetect:darkdetect/"
-#ctk_data="/Library/Frameworks/Python.framework/Versions/3.10/lib/python3.10/site-packages/customtkinter:customtkinter/"
+# save progress before overwriting 
+cp dist/LearningGermanWords.app/Contents/Resources/*-known.json word_list/
 
 darkdetect="./lib/python3.10/site-packages/darkdetect:darkdetect/"
 ctk_data="./lib/python3.10/site-packages/customtkinter:customtkinter/"
