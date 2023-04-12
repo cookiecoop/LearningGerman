@@ -32,7 +32,7 @@ class word:
         self.wrong = wrong
     def set_known(self):
         self.correct += 1
-        if self.correct > self.wrong and self.correct > 0:
+        if self.correct > self.wrong and self.correct > 1:
             self.known = "True"
     def set_wrong(self):
         self.wrong += 1
