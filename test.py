@@ -118,13 +118,14 @@ def select_file() :
     global frame, label,root
     root.wm_title("Learning German new practice")
     get_progress()
+    pb.set(count_progress/count)
     set_frame()
     label = ctk.CTkLabel(frame, width=120,
                                height=25,
                                fg_color=("white", "gray75"),
                                corner_radius=8)
     label.grid(row=0, column =0, sticky="ew",columnspan=2, padx=10, pady=10)
-    label.configure(text="Select word list to practice")
+    label.configure(text='Select word list to practice')
 
     # set the buttons for selecting word list
     buttons = []
@@ -189,9 +190,9 @@ def ask_progress():
 
 def get_new_word_list():
     global filename, filename_known
-    global pb,progress
+    global pb,progress,word_list
     print("selected no, open ",filename)
-
+    word_list = []
     with open(filename,"r") as f: 
         data = json.load(f)
         for i in data["table"]:
@@ -210,8 +211,10 @@ def get_new_word_list():
     run()
 def get_word_list():
     global filename, filename_known
-    global pb,progress
+    global pb,progress, word_list
     print(filename,filename_known)
+    word_list = []
+
     if not os.path.exists(filename_known):
         print("no progress found, start with full list")
         get_new_word_list()
@@ -244,6 +247,7 @@ def run():
     i = 0
     new_list = list(filter(lambda x :  x.known == "", word_list))
 
+    
     if len(new_list) > 1:
         i = randrange(1,len(new_list))
 
@@ -349,7 +353,7 @@ def ask_save(mes=""):
 
     yes_but.focus_set()
     root.bind('<Right>', lambda event=None: no_but.invoke())
-    root.bind('<Returb>', lambda event=None: yes_but.invoke())
+    root.bind('<Return>', lambda event=None: yes_but.invoke())
     
 def save_progress():
     global word_list,filename_known
@@ -425,7 +429,7 @@ def welcome():
     global frame,filename, filename_known
 
     set_frame()
-    
+    get_progress()
     label = ctk.CTkLabel(frame, width=600,
                                height=25,
                                fg_color=("white", "gray75"),
@@ -441,7 +445,7 @@ def welcome():
 
     practice_but =ctk.CTkButton(
         frame,
-        text='Select words to practice',
+        text='Select word list to practice',
         command=select_file)
 
     practice_but.grid(column=1,   sticky ="ew",padx=10, pady=10, row=1)
@@ -482,7 +486,7 @@ def instructions():
 
     practice_but =ctk.CTkButton(
         frame,
-        text='Select words to practice',
+        text='Select word list to practice',
         command=select_file)
 
     practice_but.grid(column=1,   sticky ="ew",padx=10, pady=10, row=2)
