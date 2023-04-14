@@ -291,6 +291,8 @@ def compare(event=None, x=None,label=None):
             label.configure(text="There are alternatives, try again")
         elif "," in w.ger.lower():
             label.configure(text="Irregular verb, try again")
+        elif "der " in w.ger.lower() or "das " in w.ger.lower() or "die " in w.ger.lower():
+            label.configure(text="missing definite artikel")
         else:
             label.configure(text="Almost there, try again")
     elif x.lower().translate(special_char_map).replace(" ","") ==  w.ger.lower().translate(special_char_map).replace(" ",""):
