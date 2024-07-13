@@ -157,6 +157,12 @@ def select_file() :
             x = 0
             y += 1
     
+    exit_but=ctk.CTkButton(
+        frame,
+        text='Exit',
+        command= exit)
+    exit_but.grid(column=0, columnspan=2,   sticky ="ew",padx=10, pady=10,row=4+y)
+
 
     return frame
 
@@ -186,10 +192,6 @@ def ask_progress():
 
     yes_but.grid(column=1,   sticky ="ew",padx=10, pady=10, row=1)
     no_but.grid(column=2,   sticky ="ew",padx=10, pady=10,row=1)
-
-    yes_but.focus_set()
-    root.bind('<n>', lambda event=None: no_but.invoke())
-    root.bind('<y>', lambda event=None: yes_but.invoke())
 
 def get_new_word_list():
     global filename, filename_known
@@ -270,10 +272,6 @@ def run():
         cont.grid(column=3, row=4, padx=10, pady=10)
         done.grid(column=4, row=4, padx=10, pady=10)
 
-        root.bind('<r>', lambda event=None: cont.invoke())
-        root.bind('<c>', lambda event=None: check.invoke())
-        root.bind('<Escape>', lambda event=None: done.invoke())
-        root.bind('<e>', lambda event=None: example.invoke())
     else:
         ask_save("Well done, all words in the list learned!")
         
@@ -317,7 +315,6 @@ def get_sentence(event=None, entry=None,label=None):
     label.configure(text="{} ({})".format(sent, w.eng))
 
     check = ctk.CTkButton(frame, text= "Check",width= 100, command=lambda : compare2(None,entry.get(),label ))
-    root.bind('<c>', lambda event=None: check.invoke())
 
 def compare2(event=None, x=None,label=None):
     global w
@@ -355,10 +352,6 @@ def ask_save(mes=""):
 
     yes_but.grid(column=1,   sticky ="ew",padx=10, pady=10, row=1)
     no_but.grid(column=3,   sticky ="ew",padx=10, pady=10,row=1)
-
-    yes_but.focus_set()
-    root.bind('<n>', lambda event=None: no_but.invoke())
-    root.bind('<y>', lambda event=None: yes_but.invoke())
     
 def save_progress():
     global word_list,filename_known
@@ -408,10 +401,6 @@ def ask_new_practice():
     yes_but.grid(column=1,   sticky ="ew",padx=10, pady=10, row=1)
     no_but.grid(column=3,   sticky ="ew",padx=10, pady=10,row=1)
 
-    yes_but.focus_set()
-    root.bind('<n>', lambda event=None: no_but.invoke())
-    root.bind('<y>', lambda event=None: yes_but.invoke())
-
 def exit():
     global root
     global frame
@@ -435,17 +424,29 @@ def welcome():
 
     set_frame()
     get_progress()
-    label = ctk.CTkLabel(frame, width=600,
-                               height=25,
-                               fg_color=("white", "gray75"),
-                               corner_radius=8)
-    label.grid(row=0, column = 0, sticky ="ew", columnspan=4, padx=10, pady=10)
-    label.configure( text="Welcome to learning german practice.")
     
-    info_but=ctk.CTkButton(
+    label = ctk.CTkLabel(frame, width=600,
+                               #height=325,
+                               fg_color=("white", "gray75"),
+                               corner_radius=8,
+                               justify="left",
+                               wraplength=550)
+    label.grid(row=0, column = 0, sticky ="ew", columnspan=4, padx=10, pady=10)
+    label.configure( text="\n If you have issues clicking a button, click on the title bar first (https://github.com/python/cpython/issues/110218). \n Start by selecting a word list to practice. \n Select if you want to start a new practice or continue from where you left. In case this is your first practice, it doesn't matter what you select here.  \n Type your answer and check. Sometimes there will be alternative answers. They are seperated by '/'. For some verb, you are asked to give past and perfect versions seperated by a comma. \n You can use Example button to see an example sentence in German. Sometimes the word you are practicing will be blank. In that case, type the missing word and check your answer. For seperable German words, this might be second part of the word only. \n  You will have a chance to save your progress before closing the program. \n")
+    
+    label2 = ctk.CTkLabel(frame, width=600,
+                               #height=225,
+                               fg_color=("white", "gray75"),
+                               corner_radius=8,
+                               justify="left",
+                               wraplength=550)
+    label2.grid(row=1, column = 0, sticky ="ew", columnspan=4, padx=10, pady=10)
+    label2.configure( text="\n Learning measure: \n To mark a word as learned, you need to have at least two correct answers and answer correctly more than incorrectly. If you answer incorrectly for 5 times, you need to answer 6 times correctly before the word is marked as 'learned'. Answers to example sentences do not count neither as correct nor as wrong. They are only meant to give context.\n \n Top progress bar shows your progress in all practices. Once you start a new practice, it will show the progress in current practice. \n")
+
+    exit_but=ctk.CTkButton(
         frame,
-        text='See instructions',
-        command=instructions)
+        text='Exit',
+        command= exit)
 
 
     practice_but =ctk.CTkButton(
@@ -453,12 +454,8 @@ def welcome():
         text='Select word list to practice',
         command=select_file)
 
-    practice_but.grid(column=1,   sticky ="ew",padx=10, pady=10, row=1)
-    info_but.grid(column=2,   sticky ="ew",padx=10, pady=10,row=1)
-
-    practice_but.focus_set()
-    root.bind('<i>', lambda event=None: info_but.invoke())
-    root.bind('<p>', lambda event=None: practice_but.invoke())
+    practice_but.grid(column=1,   sticky ="ew",padx=10, pady=10, row=2)
+    exit_but.grid(column=2,   sticky ="ew",padx=10, pady=10,row=2)
 
 def instructions():
     global frame,filename, filename_known
@@ -496,10 +493,6 @@ def instructions():
 
     practice_but.grid(column=1,   sticky ="ew",padx=10, pady=10, row=2)
     exit_but.grid(column=2,   sticky ="ew",padx=10, pady=10,row=2)
-
-    practice_but.focus_set()
-    root.bind('<e>', lambda event=None: exit_but.invoke())
-    root.bind('<p>', lambda event=None: practice_but.invoke())
 
 # start the app
 if __name__ == '__main__':
