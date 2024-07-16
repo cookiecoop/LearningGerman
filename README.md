@@ -7,7 +7,7 @@ To run interactively:
 --------------------
 pip3 install customtkinter
 
-python3 test.py
+python3 run.py
 
 To create an executable:
 -----------------------
